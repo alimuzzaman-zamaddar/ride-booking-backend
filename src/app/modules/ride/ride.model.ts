@@ -1,40 +1,40 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import { Ride } from "./ride.interface";
 
-interface Ride extends Document {
-  riderId: string;
-  driverId?: string; // Driver is assigned once the ride is accepted
-  pickupLocation: string;
-  destination: string;
-  status: "requested" | "accepted" | "in_transit" | "completed" | "canceled";
-  earnings?: number; // New field for earnings
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const rideSchema = new Schema<Ride>({
-  riderId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+const rideSchema = new Schema<Ride>(
+  {
+    riderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    driverId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    }, // Driver is optional until the ride is accepted
+    pickupLocation: { type: String, required: true },
+    destination: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ["requested", "accepted", "in_transit", "completed", "canceled"],
+      default: "requested",
+    },
+    rideCost: { type: Number, default: 0 }, // Optional field to store the ride cost (can be calculated)
+    earnings: { type: Number, default: 0 }, // Earnings for the driver, initially set to 0
+    createdAt: { type: Date, default: Date.now }, // Automatically sets the created date
+    updatedAt: { type: Date, default: Date.now }, // Automatically sets the updated date
   },
-  driverId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Driver is optional until the ride is accepted
-  pickupLocation: { type: String, required: true },
-  destination: { type: String, required: true },
-  status: {
-    type: String,
-    enum: ["requested", "accepted", "in_transit", "completed", "canceled"],
-    default: "requested",
-  },
-  earnings: { type: Number, default: 0 }, // Field to store earnings
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
+  {
+    timestamps: true, // Automatically adds createdAt and updatedAt
+  }
+);
 
-// Middleware to update the 'updatedAt' field on each modification
+// Pre-save hook to update the 'updatedAt' field when the document is modified
 rideSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
 
 const RideModel = mongoose.model<Ride>("Ride", rideSchema);
+
 export default RideModel;

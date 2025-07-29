@@ -6,7 +6,7 @@ export const requestRide = async (req: Request, res: Response) => {
   const { pickupLocation, destination } = req.body;
   try {
     const newRide = await RideService.requestRide(
-      req.user.userId, // Now TypeScript knows that userId exists on req.user
+      req.user.userId, 
       pickupLocation,
       destination
     );
@@ -64,12 +64,13 @@ export const cancelRide = async (req: Request, res: Response) => {
 
 // Get earnings for the driver
 export const getEarningsForDriver = async (req: Request, res: Response) => {
-  const driverId = req.user.userId;  // Assuming the driver's ID is in the JWT payload
+  const driverId = req.user.userId;  // The driver ID comes from the authenticated user
 
   try {
+    // Call the service to get the earnings of the driver
     const earnings = await RideService.getEarningsForDriver(driverId);
-    res.status(200).json({ earnings });
+    res.status(200).json({ success: true, message: "Earnings fetched", data: earnings });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: error.message || "Something went wrong!" });
   }
 };

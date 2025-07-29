@@ -8,7 +8,7 @@ export const checkAuth = (...authRoles: string[]) => {
     req: Request,
     res: Response,
     next: NextFunction
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> => {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
 
@@ -35,5 +35,3 @@ export const checkAuth = (...authRoles: string[]) => {
     }
   };
 };
-
-

@@ -48,6 +48,7 @@ class RideService {
     return rides;
   }
 
+
   // Get earnings for a specific driver
   async getEarningsForDriver(driverId: string) {
     // Find all completed rides for the driver and sum the earnings

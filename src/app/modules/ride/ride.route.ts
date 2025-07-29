@@ -17,7 +17,7 @@ router.post("/request", checkAuth("rider"), requestRide);
 router.patch("/:id/status", checkAuth("driver", "admin"), updateRideStatus);
 
 // Route to get all rides for the authenticated rider
-router.get("/me", checkAuth("rider"), getRidesForRider);
+router.get("/me", checkAuth("rider","driver"), getRidesForRider);
 // Route to get earnings for a specific driver
 router.get("/earnings", checkAuth("driver"), getEarningsForDriver); 
 
