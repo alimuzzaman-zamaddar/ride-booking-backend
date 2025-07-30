@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import RideService from "./ride.service";
+import { sendResponse } from "../../utils/sendResponse";
+import { catchAsync } from "../../utils/catchAsync";
+import riderService from "../driver/rider.service";
 
 // Request a ride
 export const requestRide = async (req: Request, res: Response) => {
@@ -69,8 +72,42 @@ export const getEarningsForDriver = async (req: Request, res: Response) => {
   try {
     // Call the service to get the earnings of the driver
     const earnings = await RideService.getEarningsForDriver(driverId);
-    res.status(200).json({ success: true, message: "Earnings fetched", data: earnings });
+    res.status(200).json({ success: true, message: "Your Total Earnings", data: earnings });
   } catch (error) {
     res.status(400).json({ message: error.message || "Something went wrong!" });
   }
 };
+
+export const setRiderOnline = catchAsync(async (req: Request, res: Response) => {
+    const riderId = req.params.id; // Rider ID passed in the route params
+    const currentUserRole = req.user.role;  // Get the role of the current authenticated user (from JWT)
+
+    // Call the RiderService to set rider's online status
+    const rider = await riderService.setRiderOnline(riderId, currentUserRole);
+
+    // Send the response with the updated rider information
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Rider is now online",
+        data: rider,
+    });
+});
+
+
+// Set Rider Offline (Only allowed for drivers or admins)
+export const setRiderOffline = catchAsync(async (req: Request, res: Response) => {
+    const riderId = req.params.id;
+    const currentUserRole = req?.user?.role;  // Get the role of the current authenticated user (from JWT)
+
+    // Call the RiderService to set rider's offline status
+    const rider = await riderService.setRiderOffline(riderId, currentUserRole);
+
+    // Send the response with the updated rider information
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Rider is now offline",
+        data: rider,
+    });
+});

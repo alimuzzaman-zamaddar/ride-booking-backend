@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import authService from "./auth.service";
 
+
 export const register = async (req: Request, res: Response) => {
   const { email, password, role } = req.body;
   try {
@@ -10,7 +11,6 @@ export const register = async (req: Request, res: Response) => {
     if (error instanceof Error) {
       res.status(400).json({ message: error.message });
     } else {
-      // Fallback for unknown error types
       res.status(400).json({ message: "An unknown error occurred" });
     }
   }
@@ -28,7 +28,10 @@ export const login = async (req: Request, res: Response) => {
       token,
     });
   } catch (error) {
-    console.error("Error during login:", error.message);
-    res.status(400).json({ message: error.message });
+    console.error("Error during login:", error);
+    res.status(400).json({ message: error.message || "An error occurred during login" });
   }
 };
+
+
+

@@ -5,7 +5,9 @@ import {
   updateRideStatus,
   getRidesForRider,
   cancelRide,
-  getEarningsForDriver, // Import the cancelRide function
+  getEarningsForDriver,
+  setRiderOnline,
+  setRiderOffline,
 } from "./ride.controller"; // Import the controller functions
 
 const router = Router();
@@ -22,6 +24,12 @@ router.get("/me", checkAuth("rider","driver"), getRidesForRider);
 router.get("/earnings", checkAuth("driver"), getEarningsForDriver); 
 
 // Route to cancel a ride (Only allowed for the rider who created it)
-router.patch("/:id/cancel", checkAuth("rider"), cancelRide); // Ensure this is defined
+router.patch("/:id/cancel", checkAuth("rider"), cancelRide); 
+
+// Route to set rider status to online (only accessible to the rider and admins)
+router.post("/:id/online", checkAuth("driver", "admin"), setRiderOnline);
+
+// Route to set rider status to offline (only accessible to the rider and admins)
+router.post("/:id/offline", checkAuth("driver", "admin"), setRiderOffline);
 
 export default router;
