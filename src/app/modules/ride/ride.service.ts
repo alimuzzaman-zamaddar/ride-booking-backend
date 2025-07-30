@@ -11,13 +11,13 @@ class RideService {
       riderId,
       pickupLocation,
       destination,
-      status: "requested", // Status is a literal type, no longer a generic string
+      status: "requested", 
     });
     await newRide.save();
     return newRide;
   }
 
-  // Update ride status (Driver or Admin can update)
+
   async updateRideStatus(
     rideId: string,
     status: "requested" | "accepted" | "in_transit" | "completed" | "canceled",
@@ -28,12 +28,11 @@ class RideService {
 
     ride.status = status;
     if (status === "accepted") {
-      ride.driverId = driverId; // Assign driver when accepted
+      ride.driverId = driverId; 
     }
 
     if (status === "completed") {
-      // Example logic for earnings calculation (fixed amount per ride)
-      const earnings = 50; // You can replace this with a dynamic calculation logic
+      const earnings = 50;
       ride.earnings = earnings;
     }
 
@@ -47,7 +46,6 @@ class RideService {
     if (!rides) throw new Error("No rides found for the rider");
     return rides;
   }
-
 
   // Get earnings for a specific driver
   async getEarningsForDriver(driverId: string) {

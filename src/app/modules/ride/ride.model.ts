@@ -19,13 +19,13 @@ const rideSchema = new Schema<Ride>(
       enum: ["requested", "accepted", "in_transit", "completed", "canceled"],
       default: "requested",
     },
-    rideCost: { type: Number, default: 0 }, // Optional field to store the ride cost (can be calculated)
-    earnings: { type: Number, default: 0 }, // Earnings for the driver, initially set to 0
-    createdAt: { type: Date, default: Date.now }, // Automatically sets the created date
-    updatedAt: { type: Date, default: Date.now }, // Automatically sets the updated date
+    rideCost: { type: Number, default: 0 },
+    earnings: { type: Number, default: 0 }, 
+    createdAt: { type: Date, default: Date.now }, 
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt
+    timestamps: true, 
+    versionKey: false, 
   }
 );
 

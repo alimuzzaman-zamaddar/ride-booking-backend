@@ -9,6 +9,7 @@ export interface User extends Document {
   isActive: boolean;
   isDeleted: boolean;
   isBlocked: boolean;
+  isOnline: boolean;
   cost: number;
   earning: number;
   rides: string[]; 
@@ -22,26 +23,27 @@ const userSchema = new Schema<User>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["admin", "rider", "driver"], required: true },
-    isActive: { type: Boolean, default: true }, // User active or not
-    isDeleted: { type: Boolean, default: false }, // If the user is deleted or not
-    isBlocked: { type: Boolean, default: false }, // If the user is blocked or not
-    cost: { type: Number, default: 0 }, // Cost associated with the user
-    earning: { type: Number, default: 0 }, // Earnings of the user (for drivers)
-    rides: { type: [String], default: [] }, // List of ride IDs (for rider)
+    isActive: { type: Boolean, default: true }, 
+    isDeleted: { type: Boolean, default: false }, 
+    isBlocked: { type: Boolean, default: false }, 
+    isOnline: { type: Boolean, default: false },
+    cost: { type: Number, default: 0 }, 
+    earning: { type: Number, default: 0 }, 
+    rides: { type: [String], default: [] }, 
   },
   {
-    timestamps: true, // Mongoose automatically adds `createdAt` and `updatedAt`
+    timestamps: true, 
   }
 );
 
 // Password hashing before saving
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next(); // Proceed if password is modified
-  this.password = await bcrypt.hash(this.password, 10); // Hash the password
-  next(); // Proceed with saving the document
+  if (!this.isModified("password")) return next(); 
+  this.password = await bcrypt.hash(this.password, 10); 
+  next(); 
 });
 
-// Model definition
+
 const UserModel = mongoose.model<User>("User", userSchema);
 
 export default UserModel;
