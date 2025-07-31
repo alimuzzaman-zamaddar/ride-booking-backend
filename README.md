@@ -433,14 +433,17 @@ Here is the properly formatted API documentation for the **Admin Routes**:
 ---
 
 
-
 #### `PATCH /user/block/:id`
 
-* **Description:** Admin can block a user.
-* **Params:** `id` (user ID)
-* **Response:**
+**Description:** Admin can block a user.
 
-  ```json
+**Params:**
+
+* `id` (user ID)
+
+**Response:**
+
+```json
 {
     "statusCode": 200,
     "success": true,
@@ -451,15 +454,21 @@ Here is the properly formatted API documentation for the **Admin Routes**:
         "role": "rider"
     }
 }
-  ```
+```
+
+---
 
 #### `PATCH /users/unblock/:id`
 
-* **Description:** Admin can unblock a user.
-* **Params:** `id` (user ID)
-* **Response:**
+**Description:** Admin can unblock a user.
 
-  ```json
+**Params:**
+
+* `id` (user ID)
+
+**Response:**
+
+```json
 {
     "statusCode": 200,
     "success": true,
@@ -470,7 +479,10 @@ Here is the properly formatted API documentation for the **Admin Routes**:
         "role": "rider"
     }
 }
-  ```
+```
+
+
+
 
 ### Error Handling
 
