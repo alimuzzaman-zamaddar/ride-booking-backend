@@ -262,32 +262,101 @@ Here is the properly formatted API documentation for both endpoints:
 
 ---
 
-Let me know if you need any further modifications or clarifications!
 
 
+
+Here is the properly formatted API documentation for the new endpoints:
+
+---
 
 #### `PATCH /ride/:id/status`
 
-* **Description:** Driver updates the ride status (e.g., "picked\_up", "in\_transit", "completed").
-* **Params:** `id` (ride ID)
-* **Body:**
+**Description:** Driver updates the ride status (e.g., "picked\_up", "in\_transit", "completed").
 
-  ```json
-  {
-    "status": "accepted"
+**Params:**
+
+* `id` (ride ID)
+
+**Request Body:**
+
+```json
+{
+  "status": "accepted"
+}
+```
+
+**Response:**
+
+```json
+{
+  "message": "Ride status updated",
+  "ride": {
+    "rideCost": 0,
+    "_id": "6888b012dbc258e2d85ff66d",
+    "riderId": "688789a6abd9d82beaa537f3",
+    "pickupLocation": "Location A",
+    "destination": "Location B",
+    "status": "accepted",
+    "earnings": 0,
+    "createdAt": "2025-07-29T11:27:14.976Z",
+    "updatedAt": "2025-07-31T08:36:50.676Z",
+    "__v": 0,
+    "driverId": "6888e579b6b06275d80bd5ca"
   }
-  ```
+}
+```
+
+**Example with status `completed`:**
+
+**Request Body:**
+
+```json
+{
+  "status": "completed"
+}
+```
+
+**Response:**
+
+```json
+{
+  "message": "Ride status updated",
+  "ride": {
+    "_id": "6888b012dbc258e2d85ff66d",
+    "riderId": "688789a6abd9d82beaa537f3",
+    "pickupLocation": "Location A",
+    "destination": "Location B",
+    "status": "completed",
+    "earnings": 50,
+    "createdAt": "2025-07-29T11:27:14.976Z",
+    "updatedAt": "2025-07-31T08:38:07.378Z",
+    "__v": 0,
+    "driverId": "6888e579b6b06275d80bd5ca",
+    "rideCost": 0
+  }
+}
+```
+
+---
 
 #### `GET /ride/earnings`
 
-* **Description:** Retrieves total earnings for a driver from completed rides.
-* **Response:**
+**Description:** Retrieves total earnings for a driver from completed rides.
 
-  ```json
-  {
-    "earnings": 150.0
-  }
-  ```
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Your Total Earnings",
+  "data": 150
+}
+```
+
+---
+
+Let me know if you need any further adjustments!
+
 
 #### `POST /ride/:id/online`
 
