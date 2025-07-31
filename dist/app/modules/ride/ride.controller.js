@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setRiderOffline = exports.setRiderOnline = exports.getEarningsForDriver = exports.cancelRide = exports.getRidesForRider = exports.updateRideStatus = exports.requestRide = void 0;
+exports.getTotalCostForRider = exports.setRiderOffline = exports.setRiderOnline = exports.getEarningsForDriver = exports.cancelRide = exports.getRidesForRider = exports.updateRideStatus = exports.requestRide = void 0;
 const ride_service_1 = __importDefault(require("./ride.service"));
 const sendResponse_1 = require("../../utils/sendResponse");
 const catchAsync_1 = require("../../utils/catchAsync");
@@ -78,10 +78,14 @@ const getEarningsForDriver = (req, res) => __awaiter(void 0, void 0, void 0, fun
     try {
         // Call the service to get the earnings of the driver
         const earnings = yield ride_service_1.default.getEarningsForDriver(driverId);
-        res.status(200).json({ success: true, message: "Your Total Earnings", data: earnings });
+        res
+            .status(200)
+            .json({ success: true, message: "Your Total Earnings", data: earnings });
     }
     catch (error) {
-        res.status(400).json({ message: error.message || "Something went wrong!" });
+        res
+            .status(400)
+            .json({ message: error.message || "Something went wrong!" });
     }
 });
 exports.getEarningsForDriver = getEarningsForDriver;
@@ -100,9 +104,8 @@ exports.setRiderOnline = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(vo
 }));
 // Set Rider Offline (Only allowed for drivers or admins)
 exports.setRiderOffline = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     const riderId = req.params.id;
-    const currentUserRole = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.role; // Get the role of the current authenticated user (from JWT)
+    const currentUserRole = req.user.role; // Get the role of the current authenticated user (from JWT)
     // Call the RiderService to set rider's offline status
     const rider = yield rider_service_1.default.setRiderOffline(riderId, currentUserRole);
     // Send the response with the updated rider information
@@ -113,3 +116,21 @@ exports.setRiderOffline = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(v
         data: rider,
     });
 }));
+// Get total cost for the rider
+const getTotalCostForRider = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const riderId = req.user.userId;
+        const totalCost = yield ride_service_1.default.getTotalCostForRider(riderId);
+        res.status(200).json({
+            success: true,
+            message: "Your Total Ride Cost",
+            data: totalCost,
+        });
+    }
+    catch (error) {
+        res
+            .status(400)
+            .json({ message: error.message || "Something went wrong!" });
+    }
+});
+exports.getTotalCostForRider = getTotalCostForRider;

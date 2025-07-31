@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const driver_controller_1 = require("./driver.controller");
+const checkAuth_1 = require("../../middlewares/checkAuth");
+const router = (0, express_1.Router)();
+router.patch("/approve/:id", (0, checkAuth_1.checkAuth)("admin"), driver_controller_1.approveDriver);
+router.patch("/suspend/:id", (0, checkAuth_1.checkAuth)("admin"), driver_controller_1.suspendDriver);
+router.get("/earnings", (0, checkAuth_1.checkAuth)("driver"), driver_controller_1.getEarningsForDriver);
+exports.default = router;

@@ -1,5 +1,12 @@
 import { Router } from "express";
-import { register, login, getAllUsers, blockUser } from "./auth.controller";
+import {
+  register,
+  login,
+  getAllUsers,
+  blockUser,
+  approveDriver,
+  suspendDriver,
+} from "./auth.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 
 const router = Router();
@@ -15,5 +22,10 @@ router.get("/getall", checkAuth("admin"), getAllUsers);
 
 // Route to block/unblock a user (admin only)
 router.patch("/block/:id", checkAuth("admin"), blockUser);
+
+// Route to approve a driver (admin only)
+router.patch("/drivers/approve/:id", checkAuth("admin"), approveDriver);
+// Route to suspend/unsuspend a driver (admin only)
+router.patch("/drivers/suspend/:id", checkAuth("admin"), suspendDriver);
 
 export default router;

@@ -75,3 +75,47 @@ export const blockUser = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to update user status" });
   }
 };
+
+export const approveDriver = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const user = await UserModel.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "Driver not found" });
+    }
+    if (user.role !== "driver") {
+      return res.status(400).json({ message: "User is not a driver" });
+    }
+    user.isApproved = true;
+    await user.save();
+    res.status(200).json({ message: "Driver approved successfully", user });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to approve driver" });
+  }
+};
+
+export const suspendDriver = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { isSuspended } = req.body;
+    const user = await UserModel.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "Driver not found" });
+    }
+    if (user.role !== "driver") {
+      return res.status(400).json({ message: "User is not a driver" });
+    }
+    user.isSuspended = isSuspended;
+    await user.save();
+    res.status(200).json({
+      message: `Driver ${
+        isSuspended ? "suspended" : "unsuspended"
+      } successfully`,
+      user,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to update driver suspension status" });
+  }
+};
