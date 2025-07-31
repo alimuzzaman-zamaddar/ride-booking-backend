@@ -120,16 +120,33 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
 * **Response:**
 
   ```json
-  {
+{
     "rides": [
-      {
-        "status": "requested",
-        "pickupLocation": "Location A",
-        "destination": "Location B",
-        "createdAt": "2025-07-30T12:00:00Z"
-      }
+        {
+            "_id": "688a1ea1e092f26e5efdfa51",
+            "riderId": "688a1cc852e9c4b2c1799a4a",
+            "pickupLocation": "Location dhaka",
+            "destination": "Location hongkong",
+            "status": "requested",
+            "rideCost": 0,
+            "earnings": 0,
+            "createdAt": "2025-07-30T13:31:13.762Z",
+            "updatedAt": "2025-07-30T13:31:13.763Z"
+        },
+        {
+            "_id": "688a213be092f26e5efdfa59",
+            "riderId": "688a1cc852e9c4b2c1799a4a",
+            "pickupLocation": " dhaka",
+            "destination": "mawa",
+            "status": "accepted",
+            "rideCost": 0,
+            "earnings": 0,
+            "createdAt": "2025-07-30T13:42:19.126Z",
+            "updatedAt": "2025-07-30T13:54:47.549Z",
+            "driverId": "6888dd7def63c1df3f3db248"
+        },
     ]
-  }
+}
   ```
 
 #### `POST /ride/:id/cancel`
