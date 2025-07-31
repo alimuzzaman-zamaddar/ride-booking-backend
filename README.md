@@ -1,6 +1,3 @@
-Here’s a README template for the `ride-booking-backend` project based on the provided API endpoints:
-
----
 
 # ride-booking-backend
 
