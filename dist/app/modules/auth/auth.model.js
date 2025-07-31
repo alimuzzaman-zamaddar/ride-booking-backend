@@ -59,8 +59,14 @@ const userSchema = new mongoose_1.Schema({
     cost: { type: Number, default: 0 },
     earning: { type: Number, default: 0 },
     rides: { type: [String], default: [] },
+    // New fields for driver approval/suspension and extra info
+    isApproved: { type: Boolean, default: false },
+    isSuspended: { type: Boolean, default: false },
+    vehicleInfo: { type: String, default: "" },
+    licenseNumber: { type: String, default: "" },
 }, {
     timestamps: true,
+    versionKey: false,
 });
 // Password hashing before saving
 userSchema.pre("save", function (next) {
