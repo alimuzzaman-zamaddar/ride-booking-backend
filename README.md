@@ -432,32 +432,44 @@ Here is the properly formatted API documentation for the **Admin Routes**:
 
 ---
 
-Let me know if you need any further adjustments!
 
-#### `PATCH /user/:id/block`
+
+#### `PATCH /user/block/:id`
 
 * **Description:** Admin can block a user.
 * **Params:** `id` (user ID)
 * **Response:**
 
   ```json
-  {
-    "message": "User has been blocked successfully",
-    "data": { ... }
-  }
+{
+    "statusCode": 200,
+    "success": true,
+    "message": "User blocked successfully",
+    "data": {
+        "id": "688b72bb2e187f863f6cd272",
+        "email": "newRider6@example.com",
+        "role": "rider"
+    }
+}
   ```
 
-#### `PATCH /user/:id/unblock`
+#### `PATCH /users/unblock/:id`
 
 * **Description:** Admin can unblock a user.
 * **Params:** `id` (user ID)
 * **Response:**
 
   ```json
-  {
-    "message": "User has been unblocked successfully",
-    "data": { ... }
-  }
+{
+    "statusCode": 200,
+    "success": true,
+    "message": "User unblocked successfully",
+    "data": {
+        "id": "688b72bb2e187f863f6cd272",
+        "email": "newRider6@example.com",
+        "role": "rider"
+    }
+}
   ```
 
 ### Error Handling
