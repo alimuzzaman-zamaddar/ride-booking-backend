@@ -65,7 +65,7 @@ export const suspendDriver = catchAsync(async (req: Request, res: Response) => {
 
 export const getEarningsForDriver = catchAsync(
   async (req: Request, res: Response) => {
-    const driverId = req.user!.userId;
+    const driverId = req.user.userId;
     const earnings = await RideService.getEarningsForDriver(driverId);
     sendResponse(res, {
       statusCode: 200,

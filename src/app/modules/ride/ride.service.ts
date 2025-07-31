@@ -39,8 +39,6 @@ class RideService {
       const driver = await UserModel.findById(driverId);
       if (!driver) throw new Error("Driver not found");
       if (driver.role !== "driver") throw new Error("User is not a driver");
-      if (!driver.isApproved)
-        throw new Error("Driver is not approved by admin");
       if (driver.isSuspended) throw new Error("Driver is suspended");
       if (driver.isBlocked) throw new Error("Driver is blocked");
       // Check if driver already has an active ride

@@ -3,6 +3,7 @@ import RideService from "./ride.service";
 import { sendResponse } from "../../utils/sendResponse";
 import { catchAsync } from "../../utils/catchAsync";
 import riderService from "../driver/rider.service";
+import RideModel from "./ride.model";
 
 // Request a ride
 export const requestRide = async (req: Request, res: Response) => {
@@ -47,39 +48,27 @@ export const getRidesForRider = async (req: Request, res: Response) => {
   }
 };
 
-// Cancel Ride Controller
+
+
+// Cancel a ride
 export const cancelRide = async (req: Request, res: Response) => {
-  const rideId = req.params.rideId;
-  const userId = req.user.userId; // Retrieved from the decoded JWT
+  const { id } = req.params;
+  const riderId = req?.user?.userId;  // Assuming the user's id is in the JWT payload
 
   try {
-    const ride = await RideModel.findById(rideId);
-
-    if (!ride) {
-      return res.status(404).json({ message: "Ride not found" });
-    }
-
-    // Check if the ride belongs to the user
-    if (ride.riderId.toString() !== userId) {
-      return res.status(403).json({ message: "You can only cancel your own rides" });
-    }
-
-    // Proceed with canceling the ride
-    ride.status = "canceled";
-    await ride.save();
-
-    return res.status(200).json({
-      message: "Ride canceled successfully",
-      ride,
+    const canceledRide = await RideService.cancelRide(id, riderId);
+    res.status(200).json({
+      message: "Ride canceled",
+      ride: canceledRide,
     });
   } catch (error) {
-    console.error("Error canceling ride:", error); // Log the error details
-    return res.status(500).json({
-      message: "Error canceling ride",
-      error: error.message || error, // Return the error details in the response
-    });
+    res.status(400).json({ message: error.message });
   }
 };
+
+
+
+
 // Get earnings for the driver
 export const getEarningsForDriver = async (req: Request, res: Response) => {
   const driverId = req.user.userId; // The driver ID comes from the authenticated user
