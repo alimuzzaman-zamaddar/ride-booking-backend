@@ -32,20 +32,21 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
 * **Body:**
 
   ```json
-  {
-    "email": "newRider@example.com",
-    "password": "password123",
-    "role": "rider"
-  }
+{
+  "email": "newRider2@example.com",
+  "password": "password123",
+  "role": "rider"
+}
+
   ```
 * **Response:**
 
   ```json
-  {
+{
     "message": "User registered successfully",
     "user": {
-        "email": "newRider@example.com",
-        "password": "$2b$10$z/0575WA5wXj0/XqEPWLhuc9vGiRop85TZuavE68pMEWiptnCHeYe",
+        "email": "newRider2@example.com",
+        "password": "$2b$10$RCTC4HuKIGiUsoDpUt1CSOM4PzOLDq3/oEbNNhOknjZijd11czfAW",
         "role": "rider",
         "isActive": true,
         "isDeleted": false,
@@ -54,12 +55,15 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
         "cost": 0,
         "earning": 0,
         "rides": [],
-        "_id": "688a1cc852e9c4b2c1799a4a",
-        "createdAt": "2025-07-30T13:23:20.796Z",
-        "updatedAt": "2025-07-30T13:23:20.796Z",
-        "__v": 0
+        "isApproved": false,
+        "isSuspended": false,
+        "vehicleInfo": "",
+        "licenseNumber": "",
+        "_id": "688b63032f59fe17affff681",
+        "createdAt": "2025-07-31T12:35:15.556Z",
+        "updatedAt": "2025-07-31T12:35:15.556Z"
     }
-  }
+}
   ```
 
 #### `POST /auth/login`
