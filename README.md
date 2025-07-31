@@ -346,7 +346,7 @@ Here is the properly formatted API documentation for both endpoints:
 
 ---
 
-#### `GET /driver/earnings`
+#### `GET /api/v1/drivers/earnings
 
 **Description:** Retrieves total earnings for a driver from completed rides.
 
