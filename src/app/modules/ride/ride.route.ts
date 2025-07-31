@@ -27,9 +27,9 @@ router.get("/earnings", checkAuth("driver"), getEarningsForDriver);
 router.patch("/:id/cancel", checkAuth("rider"), cancelRide); 
 
 // Route to set rider status to online (only accessible to the rider and admins)
-router.post("/:id/online", checkAuth("driver", "admin"), setRiderOnline);
+router.patch("/:id/online", checkAuth("driver", "admin"), setRiderOnline);
 
 // Route to set rider status to offline (only accessible to the rider and admins)
-router.post("/:id/offline", checkAuth("driver", "admin"), setRiderOffline);
+router.patch("/:id/offline", checkAuth("driver", "admin"), setRiderOffline);
 
 export default router;
