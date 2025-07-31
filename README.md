@@ -24,24 +24,25 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
 
 ## API Endpoints
 
-### Authentication
+---
 
-#### `POST /auth/register`
+### `POST /auth/register`
 
-* **Description:** Registers a new user (admin, rider, or driver).
-* **Body:**
+**Description:** Registers a new user (admin, rider, or driver).
 
-  ```json
+**Request Body:**
+
+```json
 {
   "email": "newRider2@example.com",
   "password": "password123",
   "role": "rider"
 }
+```
 
-  ```
-* **Response:**
+**Response:**
 
-  ```json
+```json
 {
     "message": "User registered successfully",
     "user": {
@@ -64,7 +65,9 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
         "updatedAt": "2025-07-31T12:35:15.556Z"
     }
 }
-  ```
+```
+
+
 
 #### `POST /auth/login`
 
