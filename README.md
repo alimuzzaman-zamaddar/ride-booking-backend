@@ -375,7 +375,7 @@ Here is the properly formatted API documentation for the **Admin Routes**:
 
 ---
 
-### `GET /api/v1/admin/getall`
+### `GET /api/v1/users/getall`
 
 **Description:** Retrieves a list of all users;  only the admin can see this.
 
@@ -383,7 +383,10 @@ Here is the properly formatted API documentation for the **Admin Routes**:
 
 ```json
 {
-    "users": [
+    "statusCode": 200,
+    "success": true,
+    "message": "All users fetched successfully",
+    "data": [
         {
             "isOnline": false,
             "_id": "6888dd7def63c1df3f3db248",
