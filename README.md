@@ -125,8 +125,8 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
         {
             "_id": "688a1ea1e092f26e5efdfa51",
             "riderId": "688a1cc852e9c4b2c1799a4a",
-            "pickupLocation": "Location dhaka",
-            "destination": "Location hongkong",
+            "pickupLocation": "Location Dhaka",
+            "destination": "Location Hong Kong",
             "status": "requested",
             "rideCost": 0,
             "earnings": 0,
@@ -265,7 +265,7 @@ Here is the properly formatted API documentation for both endpoints:
 
 
 
-Here is the properly formatted API documentation for the new endpoints:
+
 
 ---
 
@@ -339,7 +339,7 @@ Here is the properly formatted API documentation for the new endpoints:
 
 ---
 
-#### `GET /ride/earnings`
+#### `GET /driver/earnings`
 
 **Description:** Retrieves total earnings for a driver from completed rides.
 
@@ -369,6 +369,60 @@ Let me know if you need any further adjustments!
 * **Params:** `id` (driver ID)
 
 ### Admin Routes
+
+
+Here is the properly formatted API documentation for the **Admin Routes**:
+
+---
+
+### `GET /api/v1/admin/getall`
+
+**Description:** Retrieves a list of all users;  only the admin can see this.
+
+**Response:**
+
+```json
+{
+    "users": [
+        {
+            "isOnline": false,
+            "_id": "6888dd7def63c1df3f3db248",
+            "email": "johnadmin@example.com",
+            "password": "$2b$10$FGM0/Wwn4Gw5v5N8vOFUpOscMzzfwiE6Y81bkuYB0C6CisOkdwWZe",
+            "role": "admin",
+            "isActive": true,
+            "isDeleted": false,
+            "isBlocked": false,
+            "cost": 0,
+            "earning": 0,
+            "rides": [],
+            "createdAt": "2025-07-29T14:41:01.535Z",
+            "updatedAt": "2025-07-29T14:41:01.535Z",
+            "__v": 0
+        },
+        {
+            "isOnline": false,
+            "_id": "6888e36bc17ce33b37223cd7",
+            "email": "johnrider@example.com",
+            "password": "$2b$10$RshR51kFLIOZhlG183lGAOShFXu1rYAdpnW7JFqb3.I2Ml4RE03Ye",
+            "role": "rider",
+            "isActive": true,
+            "isDeleted": false,
+            "isBlocked": false,
+            "cost": 0,
+            "earning": 0,
+            "rides": [],
+            "createdAt": "2025-07-29T15:06:19.400Z",
+            "updatedAt": "2025-07-29T15:06:19.400Z",
+            "__v": 0
+        }
+    ]
+}
+```
+
+---
+
+Let me know if you need any further adjustments!
 
 #### `PATCH /user/:id/block`
 
