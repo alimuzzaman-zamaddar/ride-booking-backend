@@ -193,37 +193,38 @@ Here is the properly formatted API documentation for both endpoints:
 
 **Description:** Updates the rider's status to "online."
 
-**Request Body:**
+
 
 ```json
-{
-  "isAvailable": true
-}
 ```
 
 **Response:**
 
 ```json
 {
-  "statusCode": 200,
-  "success": true,
-  "message": "Rider is now online",
-  "data": {
-    "_id": "6888e579b6b06275d80bd5ca",
-    "email": "johndriver@example.com",
-    "password": "$2b$10$GKz1GpCHMqiXnusI.OMLWemi2Uor3c7rZVqn47xsGWkfJOVQjaufS",
-    "role": "driver",
-    "isActive": true,
-    "isDeleted": false,
-    "isBlocked": false,
-    "cost": 0,
-    "earning": 0,
-    "rides": [],
-    "createdAt": "2025-07-29T15:15:05.489Z",
-    "updatedAt": "2025-07-31T08:30:55.923Z",
-    "__v": 0,
-    "isOnline": true
-  }
+    "statusCode": 200,
+    "success": true,
+    "message": "Rider is now offline",
+    "data": {
+        "_id": "6888e579b6b06275d80bd5ca",
+        "email": "johndriver@example.com",
+        "password": "$2b$10$GKz1GpCHMqiXnusI.OMLWemi2Uor3c7rZVqn47xsGWkfJOVQjaufS",
+        "role": "driver",
+        "isActive": true,
+        "isDeleted": false,
+        "isBlocked": false,
+        "cost": 0,
+        "earning": 0,
+        "rides": [],
+        "createdAt": "2025-07-29T15:15:05.489Z",
+        "updatedAt": "2025-07-31T15:04:03.680Z",
+        "__v": 0,
+        "isOnline": true,
+        "isApproved": false,
+        "isSuspended": false,
+        "licenseNumber": "",
+        "vehicleInfo": ""
+    }
 }
 ```
 
@@ -236,34 +237,36 @@ Here is the properly formatted API documentation for both endpoints:
 **Request Body:**
 
 ```json
-{
-  "isAvailable": false
-}
+
 ```
 
-**Response:**
+
 
 ```json
 {
-  "statusCode": 200,
-  "success": true,
-  "message": "Rider is now offline",
-  "data": {
-    "_id": "6888e579b6b06275d80bd5ca",
-    "email": "johndriver@example.com",
-    "password": "$2b$10$GKz1GpCHMqiXnusI.OMLWemi2Uor3c7rZVqn47xsGWkfJOVQjaufS",
-    "role": "driver",
-    "isActive": true,
-    "isDeleted": false,
-    "isBlocked": false,
-    "cost": 0,
-    "earning": 0,
-    "rides": [],
-    "createdAt": "2025-07-29T15:15:05.489Z",
-    "updatedAt": "2025-07-31T08:30:55.923Z",
-    "__v": 0,
-    "isOnline": false
-  }
+    "statusCode": 200,
+    "success": true,
+    "message": "Rider is now offline",
+    "data": {
+        "_id": "6888e579b6b06275d80bd5ca",
+        "email": "johndriver@example.com",
+        "password": "$2b$10$GKz1GpCHMqiXnusI.OMLWemi2Uor3c7rZVqn47xsGWkfJOVQjaufS",
+        "role": "driver",
+        "isActive": true,
+        "isDeleted": false,
+        "isBlocked": false,
+        "cost": 0,
+        "earning": 0,
+        "rides": [],
+        "createdAt": "2025-07-29T15:15:05.489Z",
+        "updatedAt": "2025-07-31T15:04:03.680Z",
+        "__v": 0,
+        "isOnline": false,
+        "isApproved": false,
+        "isSuspended": false,
+        "licenseNumber": "",
+        "vehicleInfo": ""
+    }
 }
 ```
 
