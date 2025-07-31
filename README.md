@@ -119,7 +119,7 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
 * **Description:** Retrieves all rides for the authenticated rider (requires authorization token).
 * **Response:**
 
-  ```json
+  `json
 {
     "rides": [
         {
@@ -147,7 +147,7 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
         },
     ]
 }
-  ```
+  `
 
 #### `POST /ride/:id/cancel`
 
@@ -155,11 +155,21 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
 * **Params:** `id` (ride ID)
 * **Response:**
 
-  ```json
-  {
+  `json
+{
     "message": "Ride canceled",
-    "ride": { ... }
-  }
+    "ride": {
+        "_id": "688b244cb9054f78e18e8796",
+        "riderId": "688a1cc852e9c4b2c1799a4a",
+        "pickupLocation": " dhaka gulshan",
+        "destination": "mawa",
+        "status": "canceled",
+        "rideCost": 0,
+        "earnings": 0,
+        "createdAt": "2025-07-31T08:07:40.920Z",
+        "updatedAt": "2025-07-31T08:13:24.726Z"
+    }
+}
   ```
 
 ### Driver Routes
