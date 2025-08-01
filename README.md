@@ -23,7 +23,7 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
 
 ---
 
-### `POST /auth/register`
+### `POST /api/v1/auth/register`
 
 **Description:** Registers a new user (admin, rider, or driver).
 
@@ -66,7 +66,7 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
 
 
 
-#### `POST /auth/login`
+#### `POST api/v1/auth/login`
 
 * **Description:** Logs in to obtain a JWT token.
 * **Body:**
@@ -88,7 +88,7 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
 
 ### Rider Routes
 
-#### `POST /ride/request`
+#### `POST api/v1/ride/request`
 
 * **Description:** Rider requests a ride with pickup and destination locations.
 * **Body:**
@@ -118,7 +118,7 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
   }
   ```
 
-#### `GET /ride/me`
+#### `GET api/v1/ride/me`
 
 * **Description:** Retrieves all rides for the authenticated rider (requires authorization token).
 * **Response:**
@@ -155,7 +155,7 @@ The `ride-booking-backend` is a RESTful API that enables users to register, log 
 
 
 
-#### `POST /ride/:id/cancel`
+#### `POST api/v1/ride/:id/cancel`
 
 * **Description:** Rider cancels a ride using the ride ID.
 * **Params:** `id` (ride ID)
@@ -186,7 +186,7 @@ Here is the properly formatted API documentation for both endpoints:
 
 ---
 
-#### `PATCH /ride/:id/online`
+#### `PATCH api/v1/ride/:id/online`
 
 **Description:** Updates the rider's status to "online."
 
@@ -227,7 +227,7 @@ Here is the properly formatted API documentation for both endpoints:
 
 ---
 
-#### `PATCH /ride/:id/offline`
+#### `PATCH api/v1/ride/:id/offline`
 
 **Description:** Updates the rider's status to "offline."
 
@@ -276,7 +276,7 @@ Here is the properly formatted API documentation for both endpoints:
 
 ---
 
-#### `PATCH /ride/:id/status`
+#### `PATCH api/v1/ride/:id/status`
 
 **Description:** Driver updates the ride status (e.g., "picked\_up", "in\_transit", "completed").
 
@@ -365,7 +365,7 @@ Here is the properly formatted API documentation for both endpoints:
 Let me know if you need any further adjustments!
 
 
-#### `POST /ride/:id/online`
+#### `POST api/v1/ride/:id/online`
 
 * **Description:** Sets the driver to online (accessible by driver or admin).
 * **Params:** `id` (driver ID)
@@ -433,7 +433,7 @@ Here is the properly formatted API documentation for the **Admin Routes**:
 ---
 
 
-#### `PATCH /user/block/:id`
+#### `PATCH api/v1/user/block/:id`
 
 **Description:** Admin can block a user.
 
@@ -458,7 +458,7 @@ Here is the properly formatted API documentation for the **Admin Routes**:
 
 ---
 
-#### `PATCH /users/unblock/:id`
+#### `PATCH api/v1/users/unblock/:id`
 
 **Description:** Admin can unblock a user.
 
@@ -545,10 +545,3 @@ This project is built using the following technologies:
 * JWT (JSON Web Tokens)
 * Bcrypt.js (for password hashing)
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-Let me know if you need any more specific information or adjustments!
