@@ -4,6 +4,8 @@ import UserModel from "./auth.model";
 
 export const register = async (req: Request, res: Response) => {
   const { email, password, role } = req.body;
+  console.log(email, password, role);
+  
   try {
     const user = await authService.register(email, password, role);
     res.status(201).json({ message: "User registered successfully", user });
@@ -19,21 +21,26 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  console.log("Request Body:", req.body); // Add this line to log incoming data
-
   try {
-    const token = await authService.login(email, password);
+    const { user, token } = await authService.login(email, password);
+
     res.status(200).json({
       message: "Login successful",
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      },
       token,
     });
   } catch (error) {
     console.error("Error during login:", error);
-    res
-      .status(400)
-      .json({ message: error.message || "An error occurred during login" });
+    res.status(400).json({
+      message: error instanceof Error ? error.message : "An error occurred",
+    });
   }
 };
+
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -117,5 +124,22 @@ export const suspendDriver = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ message: "Failed to update driver suspension status" });
+  }
+};
+
+
+
+export const logout = (req: Request, res: Response) => {
+  try {
+    // Clear the token from the cookies (the client should delete the token as well)
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).json({ message: "An error occurred during logout" });
   }
 };

@@ -3,6 +3,7 @@ import UserModel from "../auth/auth.model";
 import RideService from "../ride/ride.service";
 import { sendResponse } from "../../utils/sendResponse";
 import { catchAsync } from "../../utils/catchAsync";
+import { date } from "zod";
 
 export const approveDriver = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -12,7 +13,7 @@ export const approveDriver = catchAsync(async (req: Request, res: Response) => {
       statusCode: 404,
       success: false,
       message: "Driver not found",
-      data: null,
+      data: user,
     });
   }
   if (user.role !== "driver") {
@@ -20,7 +21,7 @@ export const approveDriver = catchAsync(async (req: Request, res: Response) => {
       statusCode: 400,
       success: false,
       message: "User is not a driver",
-      data: null,
+      data: user,
     });
   }
   user.isApproved = true;
@@ -42,7 +43,7 @@ export const suspendDriver = catchAsync(async (req: Request, res: Response) => {
       statusCode: 404,
       success: false,
       message: "Driver not found",
-      data: null,
+      data: user,
     });
   }
   if (user.role !== "driver") {
@@ -50,7 +51,7 @@ export const suspendDriver = catchAsync(async (req: Request, res: Response) => {
       statusCode: 400,
       success: false,
       message: "User is not a driver",
-      data: null,
+      data: user,
     });
   }
   user.isSuspended = isSuspended;

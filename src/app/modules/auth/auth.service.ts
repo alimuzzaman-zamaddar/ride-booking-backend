@@ -22,14 +22,14 @@ class AuthService {
 
   // Login and return JWT
   async login(email: string, password: string) {
-    const user = (await UserModel.findOne({ email })) as User; // Explicitly cast to User
+    const user = (await UserModel.findOne({ email })) as User;
     if (!user) throw new Error("Invalid credentials");
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new Error("Invalid credentials");
 
     const payload: AuthPayload = {
-      userId: user._id.toString(), // Convert ObjectId to string
+      userId: user._id.toString(),
       role: user.role,
     };
 
@@ -43,7 +43,9 @@ class AuthService {
     const token = jwt.sign(payload, jwtSecret, {
       expiresIn: process.env.JWT_ACCESS_EXPIRES,
     });
-    return token;
+
+    // ✅ return both user and token
+    return { user, token };
   }
 
   // Verify JWT Token and get user payload
