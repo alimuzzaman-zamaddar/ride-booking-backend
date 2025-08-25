@@ -47,11 +47,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-// Schema definition for User
 const userSchema = new mongoose_1.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["admin", "rider", "driver"], required: true },
+    // ✅ NEW (optional fields)
+    name: { type: String, default: "" },
+    phone: { type: String, default: "" },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
     isBlocked: { type: Boolean, default: false },
@@ -59,7 +61,6 @@ const userSchema = new mongoose_1.Schema({
     cost: { type: Number, default: 0 },
     earning: { type: Number, default: 0 },
     rides: { type: [String], default: [] },
-    // New fields for driver approval/suspension and extra info
     isApproved: { type: Boolean, default: false },
     isSuspended: { type: Boolean, default: false },
     vehicleInfo: { type: String, default: "" },

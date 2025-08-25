@@ -20,4 +20,5 @@ router.patch("/:id/online", (0, checkAuth_1.checkAuth)("driver", "admin"), ride_
 router.patch("/:id/offline", (0, checkAuth_1.checkAuth)("driver", "admin"), ride_controller_1.setRiderOffline);
 // Route to get total cost for a specific rider
 router.get("/cost", (0, checkAuth_1.checkAuth)("rider"), ride_controller_1.getTotalCostForRider);
+router.get("/:id", (0, checkAuth_1.checkAuth)("rider", "driver", "admin"), ride_controller_1.getRideById);
 exports.default = router;

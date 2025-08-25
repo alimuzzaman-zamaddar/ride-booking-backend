@@ -31,14 +31,14 @@ class AuthService {
     // Login and return JWT
     login(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = (yield auth_model_1.default.findOne({ email })); // Explicitly cast to User
+            const user = (yield auth_model_1.default.findOne({ email }));
             if (!user)
                 throw new Error("Invalid credentials");
             const isMatch = yield bcryptjs_1.default.compare(password, user.password);
             if (!isMatch)
                 throw new Error("Invalid credentials");
             const payload = {
-                userId: user._id.toString(), // Convert ObjectId to string
+                userId: user._id.toString(),
                 role: user.role,
             };
             const jwtSecret = process.env.JWT_ACCESS_SECRET;
@@ -48,7 +48,8 @@ class AuthService {
             const token = jsonwebtoken_1.default.sign(payload, jwtSecret, {
                 expiresIn: process.env.JWT_ACCESS_EXPIRES,
             });
-            return token;
+            // ✅ return both user and token
+            return { user, token };
         });
     }
     // Verify JWT Token and get user payload

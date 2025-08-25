@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.blockUser = exports.getAllUsers = void 0;
+exports.UnblockUser = exports.blockUser = exports.getUserById = exports.getAllUsers = void 0;
 const auth_model_1 = __importDefault(require("../auth/auth.model"));
 const sendResponse_1 = require("../../utils/sendResponse");
 const catchAsync_1 = require("../../utils/catchAsync");
+const mongoose_1 = __importDefault(require("mongoose"));
 exports.getAllUsers = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield auth_model_1.default.find();
     (0, sendResponse_1.sendResponse)(res, {
@@ -23,6 +24,33 @@ exports.getAllUsers = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 
         success: true,
         message: "All users fetched successfully",
         data: users,
+    });
+}));
+exports.getUserById = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    // validate mongo id
+    if (!mongoose_1.default.isValidObjectId(id)) {
+        return (0, sendResponse_1.sendResponse)(res, {
+            statusCode: 400,
+            success: false,
+            message: "Invalid user ID",
+            data: null,
+        });
+    }
+    const user = yield auth_model_1.default.findById(id).select("-password -__v");
+    if (!user) {
+        return (0, sendResponse_1.sendResponse)(res, {
+            statusCode: 404,
+            success: false,
+            message: "User not found",
+            data: null,
+        });
+    }
+    return (0, sendResponse_1.sendResponse)(res, {
+        statusCode: 200,
+        success: true,
+        message: "User fetched successfully",
+        data: user,
     });
 }));
 exports.blockUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -34,6 +62,7 @@ exports.blockUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0,
             statusCode: 404,
             success: false,
             message: "User not found",
+            data: null,
         });
     }
     if (user.role === "admin") {
@@ -41,6 +70,41 @@ exports.blockUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0,
             statusCode: 403,
             success: false,
             message: "Cannot block admin users",
+            data: null,
+        });
+    }
+    user.isBlocked = isBlocked;
+    yield user.save();
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: 200,
+        success: true,
+        message: `User ${isBlocked ? "blocked" : "unblocked"} successfully`,
+        data: {
+            id: user._id,
+            email: user.email,
+            role: user.role,
+            isBlocked: user.isBlocked,
+        },
+    });
+}));
+exports.UnblockUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { isBlocked } = req.body;
+    const user = yield auth_model_1.default.findById(id);
+    if (!user) {
+        return (0, sendResponse_1.sendResponse)(res, {
+            statusCode: 404,
+            success: false,
+            message: "User not found",
+            data: null,
+        });
+    }
+    if (user.role === "admin") {
+        return (0, sendResponse_1.sendResponse)(res, {
+            statusCode: 403,
+            success: false,
+            message: "Cannot block admin users",
+            data: null,
         });
     }
     user.isBlocked = isBlocked;

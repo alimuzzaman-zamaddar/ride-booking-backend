@@ -43,7 +43,7 @@ const rideSchema = new mongoose_1.Schema({
     driverId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "User",
-    }, // Driver is optional until the ride is accepted
+    },
     pickupLocation: { type: String, required: true },
     destination: { type: String, required: true },
     status: {
@@ -54,14 +54,10 @@ const rideSchema = new mongoose_1.Schema({
     rideCost: { type: Number, default: 0 },
     earnings: { type: Number, default: 0 },
     createdAt: { type: Date, default: Date.now },
-}, {
-    timestamps: true,
-    versionKey: false,
-});
-// Pre-save hook to update the 'updatedAt' field when the document is modified
+}, { timestamps: true, versionKey: false });
 rideSchema.pre("save", function (next) {
     this.updatedAt = new Date();
     next();
 });
 const RideModel = mongoose_1.default.model("Ride", rideSchema);
-exports.default = RideModel;
+exports.default = RideModel; // Ensure this export is there

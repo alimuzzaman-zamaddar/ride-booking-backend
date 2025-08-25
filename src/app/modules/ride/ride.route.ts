@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { checkAuth } from "../../middlewares/checkAuth"; // Ensure the middleware is correctly imported
+import { checkAuth } from "../../middlewares/checkAuth";
 import {
   requestRide,
   updateRideStatus,
@@ -10,34 +10,29 @@ import {
   setRiderOffline,
   getTotalCostForRider,
   getRideById,
-} from "./ride.controller"; // Import the controller functions
+  listOpenRequests,
+  acceptRide,
+  rejectRide,
+  getActiveRideForDriver, // ✅ add
+} from "./ride.controller";
 
 const router = Router();
 
-// Route to request a ride (Only allowed for riders)
 router.post("/request", checkAuth("rider"), requestRide);
-
-// Route to update ride status (Only allowed for drivers or admins)
 router.patch("/:id/status", checkAuth("driver", "admin"), updateRideStatus);
-
-// Route to get all rides for the authenticated rider
 router.get("/me", checkAuth("rider", "driver"), getRidesForRider);
-// Route to get earnings for a specific driver
 router.get("/earnings", checkAuth("driver"), getEarningsForDriver);
-
-// Route to cancel a ride (Only allowed for the rider who created it)
 router.patch("/:id/cancel", checkAuth("rider"), cancelRide);
-
-// Route to set rider status to online (only accessible to the rider and admins)
 router.patch("/:id/online", checkAuth("driver", "admin"), setRiderOnline);
-
-// Route to set rider status to offline (only accessible to the rider and admins)
 router.patch("/:id/offline", checkAuth("driver", "admin"), setRiderOffline);
-
-// Route to get total cost for a specific rider
 router.get("/cost", checkAuth("rider"), getTotalCostForRider);
-router.get("/:id", checkAuth("rider", "driver", "admin"), getRideById);
+
+router.get("/requests/open", checkAuth("driver"), listOpenRequests);
+router.patch("/:id/accept", checkAuth("driver"), acceptRide);
+router.patch("/:id/reject", checkAuth("driver"), rejectRide);
+
+router.get("/active", checkAuth("driver"), getActiveRideForDriver); // ✅ new
+
+router.get("/:id", checkAuth("admin", "driver", "rider"), getRideById);
 
 export default router;
-
-

@@ -25,6 +25,7 @@ exports.approveDriver = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(voi
             statusCode: 404,
             success: false,
             message: "Driver not found",
+            data: user,
         });
     }
     if (user.role !== "driver") {
@@ -32,6 +33,7 @@ exports.approveDriver = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(voi
             statusCode: 400,
             success: false,
             message: "User is not a driver",
+            data: user,
         });
     }
     user.isApproved = true;
@@ -52,6 +54,7 @@ exports.suspendDriver = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(voi
             statusCode: 404,
             success: false,
             message: "Driver not found",
+            data: user,
         });
     }
     if (user.role !== "driver") {
@@ -59,6 +62,7 @@ exports.suspendDriver = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(voi
             statusCode: 400,
             success: false,
             message: "User is not a driver",
+            data: user,
         });
     }
     user.isSuspended = isSuspended;

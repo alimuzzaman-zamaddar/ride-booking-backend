@@ -1,5 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import RideModel from "./ride.model";
-import UserModel from "../auth/auth.model";
+import { RideStatus } from "./ride.interface";
+
+const ALLOWED_TRANSITIONS: Record<RideStatus, RideStatus[]> = {
+  requested: ["accepted", "canceled"],
+  accepted: ["picked_up", "canceled"],
+  picked_up: ["in_transit", "canceled"],
+  in_transit: ["completed", "canceled"],
+  completed: [],
+  canceled: [],
+};
 
 class RideService {
   // Request a ride
@@ -8,7 +19,6 @@ class RideService {
     pickupLocation: string,
     destination: string
   ) {
-    // Check if rider has an active ride
     const activeRide = await RideModel.findOne({
       riderId,
       status: { $in: ["requested", "accepted", "in_transit"] },
@@ -26,38 +36,35 @@ class RideService {
     return newRide;
   }
 
+  // ✅ Keep only ONE updateRideStatus
   async updateRideStatus(
     rideId: string,
-    status: "requested" | "accepted" | "in_transit" | "completed" | "canceled",
-    driverId: string
+    nextStatus: RideStatus,
+    actorUserId: string,
+    actorRole: "driver" | "admin" | "rider"
   ) {
     const ride = await RideModel.findById(rideId);
     if (!ride) throw new Error("Ride not found");
 
-    // If accepting a ride, check driver eligibility
-    if (status === "accepted") {
-      const driver = await UserModel.findById(driverId);
-      if (!driver) throw new Error("Driver not found");
-      if (driver.role !== "driver") throw new Error("User is not a driver");
-      if (driver.isSuspended) throw new Error("Driver is suspended");
-      if (driver.isBlocked) throw new Error("Driver is blocked");
-      // Check if driver already has an active ride
-      const activeRide = await RideModel.findOne({
-        driverId,
-        status: { $in: ["accepted", "in_transit"] },
-      });
-      if (activeRide) {
-        throw new Error("You already have an active ride.");
+    // only admin or assigned driver can update
+    if (actorRole !== "admin") {
+      if (!ride.driverId || String(ride.driverId) !== String(actorUserId)) {
+        throw new Error("Only the assigned driver can update this ride");
       }
-      ride.driverId = driverId;
     }
 
-    ride.status = status;
+    const allowed = ALLOWED_TRANSITIONS[ride.status] || [];
+    if (!allowed.includes(nextStatus)) {
+      throw new Error(
+        `Invalid status transition: ${ride.status} → ${nextStatus}`
+      );
+    }
 
-    if (status === "completed") {
-      const earnings = 50;
-      ride.earnings = earnings;
-      ride.rideCost = 50; // Add cost for the rider
+    ride.status = nextStatus;
+
+    if (nextStatus === "completed") {
+      ride.earnings = ride.earnings ?? 50;
+      ride.rideCost = ride.rideCost ?? 50;
     }
 
     await ride.save();
@@ -79,7 +86,6 @@ class RideService {
   ) {
     const query: any = { riderId };
 
-    // Apply filters
     if (filters.status) {
       query.status = filters.status;
     }
@@ -100,14 +106,12 @@ class RideService {
     const rides = await RideModel.find(query)
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .sort({ createdAt: -1 }); // Sort by most recent first
+      .sort({ createdAt: -1 });
 
     return rides;
   }
 
-  // Get earnings for a specific driver
   async getEarningsForDriver(driverId: string) {
-    // Find all completed rides for the driver and sum the earnings
     const completedRides = await RideModel.find({
       driverId,
       status: "completed",
@@ -116,14 +120,12 @@ class RideService {
       throw new Error("No completed rides found for the driver");
     }
 
-    const earnings = completedRides.reduce(
+    return completedRides.reduce(
       (total, ride) => total + (ride.earnings || 0),
       0
     );
-    return earnings; // Return the total earnings for the driver
   }
 
-  // Cancel a ride (Rider can cancel within allowed time)
   async cancelRide(rideId: string, riderId: string) {
     const ride = await RideModel.findById(rideId);
     if (!ride) throw new Error("Ride not found");
@@ -143,7 +145,6 @@ class RideService {
     return ride;
   }
 
-  // Get total cost for a specific rider
   async getTotalCostForRider(riderId: string) {
     const completedRides = await RideModel.find({
       riderId,
@@ -152,11 +153,17 @@ class RideService {
     if (!completedRides || completedRides.length === 0) {
       throw new Error("No completed rides found for the rider");
     }
-    const totalCost = completedRides.reduce(
+    return completedRides.reduce(
       (total, ride) => total + (ride.rideCost || 0),
       0
     );
-    return totalCost;
+  }
+
+  async getActiveRideForDriver(driverId: string) {
+    return RideModel.findOne({
+      driverId,
+      status: { $in: ["accepted", "picked_up", "in_transit"] },
+    }).sort({ updatedAt: -1 });
   }
 }
 

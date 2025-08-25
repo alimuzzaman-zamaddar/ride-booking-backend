@@ -3,7 +3,6 @@ import UserModel from "../auth/auth.model";
 import RideService from "../ride/ride.service";
 import { sendResponse } from "../../utils/sendResponse";
 import { catchAsync } from "../../utils/catchAsync";
-import { date } from "zod";
 
 export const approveDriver = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -76,3 +75,60 @@ export const getEarningsForDriver = catchAsync(
     });
   }
 );
+
+
+
+
+
+export const setDriverOnline = catchAsync(async (req: Request, res: Response) => {
+  const driverId = req.user.userId;
+  const user = await UserModel.findById(driverId);
+
+  if (!user) {
+    return sendResponse(res, { statusCode: 404, success: false, message: "Driver not found", data: null });
+  }
+  if (user.role !== "driver") {
+    return sendResponse(res, { statusCode: 403, success: false, message: "Only drivers can go online", data: null });
+  }
+  if (user.isSuspended) {
+    return sendResponse(res, { statusCode: 400, success: false, message: "Account suspended. Contact support.", data: null });
+  }
+  if (user.isBlocked) {
+    return sendResponse(res, { statusCode: 400, success: false, message: "Account blocked. Contact support.", data: null });
+  }
+  if (user.isApproved === false) {
+    return sendResponse(res, { statusCode: 400, success: false, message: "Waiting for admin approval.", data: null });
+  }
+
+  user.isOnline = true;
+  await user.save();
+
+  return sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "You're now online",
+    data: { id: user._id, isOnline: user.isOnline },
+  });
+});
+
+export const setDriverOffline = catchAsync(async (req: Request, res: Response) => {
+  const driverId = req.user.userId;
+  const user = await UserModel.findById(driverId);
+
+  if (!user) {
+    return sendResponse(res, { statusCode: 404, success: false, message: "Driver not found", data: null });
+  }
+  if (user.role !== "driver") {
+    return sendResponse(res, { statusCode: 403, success: false, message: "Only drivers can go offline", data: null });
+  }
+
+  user.isOnline = false;
+  await user.save();
+
+  return sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "You're now offline",
+    data: { id: user._id, isOnline: user.isOnline },
+  });
+});

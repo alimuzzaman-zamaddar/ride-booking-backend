@@ -48,8 +48,6 @@ class RideService {
                     throw new Error("Driver not found");
                 if (driver.role !== "driver")
                     throw new Error("User is not a driver");
-                if (!driver.isApproved)
-                    throw new Error("Driver is not approved by admin");
                 if (driver.isSuspended)
                     throw new Error("Driver is suspended");
                 if (driver.isBlocked)
@@ -74,12 +72,31 @@ class RideService {
             return ride;
         });
     }
-    // Get rides for a specific rider
-    getRidesForRider(riderId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rides = yield ride_model_1.default.find({ riderId });
-            if (!rides)
-                throw new Error("No rides found for the rider");
+    // Backend - Ride Service (Adding Filters and Pagination)
+    getRidesForRiderWithFilters(riderId_1) {
+        return __awaiter(this, arguments, void 0, function* (riderId, page = 1, pageSize = 10, filters) {
+            const query = { riderId };
+            // Apply filters
+            if (filters.status) {
+                query.status = filters.status;
+            }
+            if (filters.startDate && filters.endDate) {
+                query.createdAt = {
+                    $gte: new Date(filters.startDate),
+                    $lte: new Date(filters.endDate),
+                };
+            }
+            if (filters.minFare || filters.maxFare) {
+                query.rideCost = {};
+                if (filters.minFare)
+                    query.rideCost.$gte = filters.minFare;
+                if (filters.maxFare)
+                    query.rideCost.$lte = filters.maxFare;
+            }
+            const rides = yield ride_model_1.default.find(query)
+                .skip((page - 1) * pageSize)
+                .limit(pageSize)
+                .sort({ createdAt: -1 }); // Sort by most recent first
             return rides;
         });
     }

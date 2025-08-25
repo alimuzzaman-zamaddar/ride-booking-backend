@@ -4,6 +4,8 @@ import { sendResponse } from "../../utils/sendResponse";
 import { catchAsync } from "../../utils/catchAsync";
 import riderService from "../driver/rider.service";
 import RideModel from "./ride.model";
+import UserModel from "../auth/auth.model";
+
 
 // src/controllers/ride.controller.ts
 export const requestRide = async (req: Request, res: Response) => {
@@ -30,20 +32,48 @@ export const requestRide = async (req: Request, res: Response) => {
 
 // Basic fare calculation function (this can be replaced with real API or algorithm)
 const calculateFare = (pickupLocation: string, destination: string): number => {
-  // Here we can calculate fare based on pickup and destination
-  // For example, simple static rate or use Google Maps API for distance calculation
   return 50; // Just an example value
 };
 
-// Update ride status (Driver or Admin)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Update ride status (Driver or Admin) — hardened to use allowed transitions
 export const updateRideStatus = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { status } = req.body;
+  const { status } = req.body as { status: RideStatus };
+
   try {
     const updatedRide = await RideService.updateRideStatus(
       id,
       status,
-      req.user.userId // TypeScript now knows `userId` exists
+      req.user.userId,
+      req.user.role
     );
     res.status(200).json({ message: "Ride status updated", ride: updatedRide });
   } catch (error) {
@@ -193,3 +223,88 @@ export const getTotalCostForRider = async (req: Request, res: Response) => {
       .json({ message: (error as Error).message || "Something went wrong!" });
   }
 };
+
+
+
+
+// GET /ride/requests/open  (driver only)
+// Returns rides with status "requested" and no driver assigned,
+// and excludes rides already rejected by this driver.
+export const listOpenRequests = async (req: Request, res: Response) => {
+  try {
+    const driverId = req.user.userId;
+    const rides = await RideModel.find({
+      status: "requested",
+      $or: [{ driverId: { $exists: false } }, { driverId: null }],
+      $and: [
+        { $or: [{ rejectedBy: { $ne: driverId } }, { rejectedBy: { $exists: false } }] },
+      ],
+    })
+      .sort({ createdAt: -1 })
+      .limit(50);
+
+    res.status(200).json({ rides });
+  } catch (error) {
+    res.status(400).json({ message: (error as Error).message });
+  }
+};
+
+// PATCH /ride/:id/accept  (driver only)
+export const acceptRide = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const driverId = req.user.userId;
+
+  try {
+    const driver = await UserModel.findById(driverId);
+    if (!driver) return res.status(404).json({ message: "Driver not found" });
+    if (driver.role !== "driver") return res.status(403).json({ message: "Only drivers can accept rides" });
+    if (driver.isBlocked) return res.status(400).json({ message: "Account is blocked" });
+    if (driver.isSuspended) return res.status(400).json({ message: "Account is suspended" });
+    if (driver.isApproved === false) return res.status(400).json({ message: "Driver not approved yet" });
+    if (!driver.isOnline) return res.status(400).json({ message: "Go online to accept rides" });
+
+    const updatedRide = await RideService.updateRideStatus(id, "accepted", driverId);
+    res.status(200).json({ message: "Ride accepted", ride: updatedRide });
+  } catch (error) {
+    res.status(400).json({ message: (error as Error).message });
+  }
+};
+
+// PATCH /ride/:id/reject  (driver only)
+// Marks this ride as rejected-by this driver so it won't show again to them.
+export const rejectRide = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const driverId = req.user.userId;
+
+  try {
+    const ride = await RideModel.findById(id);
+    if (!ride) return res.status(404).json({ message: "Ride not found" });
+    if (ride.status !== "requested") return res.status(400).json({ message: "Ride is not in requested state" });
+
+    // add driverId to rejectedBy if not present
+    const already = ride.rejectedBy?.some(d => String(d) === String(driverId));
+    if (!already) {
+      ride.rejectedBy = [...(ride.rejectedBy ?? []), driverId as any];
+      await ride.save();
+    }
+
+    res.status(200).json({ message: "Ride rejected" });
+  } catch (error) {
+    res.status(400).json({ message: (error as Error).message });
+  }
+};
+
+
+
+// Driver: get current active ride
+export const getActiveRideForDriver = async (req: Request, res: Response) => {
+  try {
+    const driverId = req.user.userId;
+    const ride = await RideService.getActiveRideForDriver(driverId);
+    return res.status(200).json({ ride });
+  } catch (e) {
+    return res.status(400).json({ message: (e as Error).message });
+  }
+};
+
+

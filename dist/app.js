@@ -27,7 +27,10 @@ app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.json());
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+}));
 // Global middleware to check if user is blocked
 app.use("/api/v1", checkAuth_1.checkUserBlocked);
 app.use("/api/v1", routes_1.router);

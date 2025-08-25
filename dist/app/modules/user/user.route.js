@@ -5,5 +5,7 @@ const user_controller_1 = require("./user.controller");
 const checkAuth_1 = require("../../middlewares/checkAuth");
 const router = (0, express_1.Router)();
 router.get("/getall", (0, checkAuth_1.checkAuth)("admin"), user_controller_1.getAllUsers);
+router.get("/:id", (0, checkAuth_1.checkAuth)("admin"), user_controller_1.getUserById); // ✅ NEW
 router.patch("/block/:id", (0, checkAuth_1.checkAuth)("admin"), user_controller_1.blockUser);
+router.patch("/unblock/:id", (0, checkAuth_1.checkAuth)("admin"), user_controller_1.UnblockUser);
 exports.default = router;
