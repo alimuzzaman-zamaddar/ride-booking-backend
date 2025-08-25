@@ -9,6 +9,7 @@ import {
   setRiderOnline,
   setRiderOffline,
   getTotalCostForRider,
+  getRideById,
 } from "./ride.controller"; // Import the controller functions
 
 const router = Router();
@@ -35,6 +36,7 @@ router.patch("/:id/offline", checkAuth("driver", "admin"), setRiderOffline);
 
 // Route to get total cost for a specific rider
 router.get("/cost", checkAuth("rider"), getTotalCostForRider);
+router.get("/:id", checkAuth("rider", "driver", "admin"), getRideById);
 
 export default router;
 

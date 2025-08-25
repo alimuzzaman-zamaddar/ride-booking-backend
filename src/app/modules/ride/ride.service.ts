@@ -64,10 +64,44 @@ class RideService {
     return ride;
   }
 
-  // Get rides for a specific rider
-  async getRidesForRider(riderId: string) {
-    const rides = await RideModel.find({ riderId });
-    if (!rides) throw new Error("No rides found for the rider");
+  // Backend - Ride Service (Adding Filters and Pagination)
+  async getRidesForRiderWithFilters(
+    riderId: string,
+    page: number = 1,
+    pageSize: number = 10,
+    filters: {
+      status?: string;
+      startDate?: string;
+      endDate?: string;
+      minFare?: number;
+      maxFare?: number;
+    }
+  ) {
+    const query: any = { riderId };
+
+    // Apply filters
+    if (filters.status) {
+      query.status = filters.status;
+    }
+
+    if (filters.startDate && filters.endDate) {
+      query.createdAt = {
+        $gte: new Date(filters.startDate),
+        $lte: new Date(filters.endDate),
+      };
+    }
+
+    if (filters.minFare || filters.maxFare) {
+      query.rideCost = {};
+      if (filters.minFare) query.rideCost.$gte = filters.minFare;
+      if (filters.maxFare) query.rideCost.$lte = filters.maxFare;
+    }
+
+    const rides = await RideModel.find(query)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .sort({ createdAt: -1 }); // Sort by most recent first
+
     return rides;
   }
 

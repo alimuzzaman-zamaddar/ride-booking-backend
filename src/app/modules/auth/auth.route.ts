@@ -7,6 +7,9 @@ import {
   approveDriver,
   suspendDriver,
   logout,
+  getMe,
+  updateMe,
+  changePassword,
 } from "./auth.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 
@@ -32,5 +35,14 @@ router.patch("/block/:id", checkAuth("admin"), blockUser);
 router.patch("/drivers/approve/:id", checkAuth("admin"), approveDriver);
 // Route to suspend/unsuspend a driver (admin only)
 router.patch("/drivers/suspend/:id", checkAuth("admin"), suspendDriver);
+
+// profile endpoints
+router.get("/me", checkAuth("admin", "driver", "rider"), getMe);
+router.patch("/me", checkAuth("admin", "driver", "rider"), updateMe);
+router.patch(
+  "/me/change-password",
+  checkAuth("admin", "driver", "rider"),
+  changePassword
+);
 
 export default router;

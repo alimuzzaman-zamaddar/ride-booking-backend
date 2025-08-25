@@ -11,11 +11,11 @@ export interface User {
   password: string;
   role: "admin" | "rider" | "driver";
   isActive: boolean;
-  isDeleted: boolean; 
+  isDeleted: boolean;
   isblocked: boolean;
   cost: number;
   earning: number;
-  rides: string[]; 
+  rides: string[];
   createdAt: Date;
   updatedAt: Date;
 }

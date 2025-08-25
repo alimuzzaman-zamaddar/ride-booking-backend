@@ -11,6 +11,8 @@ const moduleRoutes = [
   { path: "/ride", route: RideRoutes },
   { path: "/users", route: UserRoutes },
   { path: "/drivers", route: DriverRoutes },
+  
+  
 ];
 
 moduleRoutes.forEach(route => {

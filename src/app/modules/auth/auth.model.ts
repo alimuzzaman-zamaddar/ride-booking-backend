@@ -1,11 +1,15 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 
-// Interface defining the User model
 export interface User extends Document {
   email: string;
   password: string;
   role: "admin" | "rider" | "driver";
+
+  // ✅ NEW
+  name?: string;
+  phone?: string;
+
   isActive: boolean;
   isDeleted: boolean;
   isBlocked: boolean;
@@ -15,19 +19,22 @@ export interface User extends Document {
   rides: string[];
   createdAt: Date;
   updatedAt: Date;
-  // New fields for driver approval/suspension and extra info
   isApproved?: boolean;
   isSuspended?: boolean;
   vehicleInfo?: string;
   licenseNumber?: string;
 }
 
-// Schema definition for User
 const userSchema = new Schema<User>(
   {
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["admin", "rider", "driver"], required: true },
+
+    // ✅ NEW (optional fields)
+    name: { type: String, default: "" },
+    phone: { type: String, default: "" },
+
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
     isBlocked: { type: Boolean, default: false },
@@ -35,7 +42,6 @@ const userSchema = new Schema<User>(
     cost: { type: Number, default: 0 },
     earning: { type: Number, default: 0 },
     rides: { type: [String], default: [] },
-    // New fields for driver approval/suspension and extra info
     isApproved: { type: Boolean, default: false },
     isSuspended: { type: Boolean, default: false },
     vehicleInfo: { type: String, default: "" },

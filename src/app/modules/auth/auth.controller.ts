@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import authService from "./auth.service";
 import UserModel from "./auth.model";
+import bcrypt from "bcryptjs";
 
 export const register = async (req: Request, res: Response) => {
   const { email, password, role } = req.body;
@@ -129,6 +130,80 @@ export const suspendDriver = async (req: Request, res: Response) => {
   }
 };
 
+
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    const me = await UserModel.findById(req.user.userId).select("-password");
+    if (!me) return res.status(404).json({ message: "User not found" });
+    res.status(200).json({ data: me });
+  } catch (e) {
+    res.status(500).json({ message: "Failed to fetch profile" });
+  }
+};
+
+export const updateMe = async (req: Request, res: Response) => {
+  try {
+    const { name, phone } = req.body as { name?: string; phone?: string };
+
+    // Only allow name & phone changes here (not role/email/password)
+    const updates: Record<string, any> = {};
+    if (typeof name === "string") updates.name = name;
+    if (typeof phone === "string") updates.phone = phone;
+
+    const updated = await UserModel.findByIdAndUpdate(
+      req.user.userId,
+      { $set: updates },
+      { new: true, runValidators: true, select: "-password" }
+    );
+    if (!updated) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json({ message: "Profile updated", data: updated });
+  } catch (e) {
+    res.status(400).json({ message: "Failed to update profile" });
+  }
+};
+
+
+export const changePassword = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.userId; // set by checkAuth
+    const { oldPassword, newPassword } = req.body as {
+      oldPassword?: string;
+      newPassword?: string;
+    };
+
+    if (!oldPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "oldPassword and newPassword are required" });
+    }
+    if (newPassword.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "New password must be at least 6 characters" });
+    }
+
+    const user = await UserModel.findById(userId).select("+password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Compare old password
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Old password is incorrect" });
+    }
+
+    // Assign new password (pre-save hook will hash on modify)
+    user.password = newPassword;
+    await user.save();
+
+    return res.status(200).json({ message: "Password changed successfully" });
+  } catch (err) {
+    console.error("changePassword error:", err);
+    return res.status(500).json({ message: "Failed to change password" });
+  }
+};
 
 
 export const logout = (req: Request, res: Response) => {

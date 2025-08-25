@@ -5,21 +5,34 @@ import { catchAsync } from "../../utils/catchAsync";
 import riderService from "../driver/rider.service";
 import RideModel from "./ride.model";
 
-// Request a ride
+// src/controllers/ride.controller.ts
 export const requestRide = async (req: Request, res: Response) => {
   const { pickupLocation, destination } = req.body;
+
+  // Calculate fare estimation (simplified logic)
+  const fare = calculateFare(pickupLocation, destination);
+
   try {
     const newRide = await RideService.requestRide(
       req.user.userId,
       pickupLocation,
-      destination
+      destination,
+      fare
     );
-    res
-      .status(201)
-      .json({ message: "Ride requested successfully", ride: newRide });
+    res.status(201).json({
+      message: "Ride requested successfully",
+      ride: { ...newRide, rideCost: fare }, // Include fare in the response
+    });
   } catch (error) {
     res.status(400).json({ message: (error as Error).message });
   }
+};
+
+// Basic fare calculation function (this can be replaced with real API or algorithm)
+const calculateFare = (pickupLocation: string, destination: string): number => {
+  // Here we can calculate fare based on pickup and destination
+  // For example, simple static rate or use Google Maps API for distance calculation
+  return 50; // Just an example value
 };
 
 // Update ride status (Driver or Admin)
@@ -38,15 +51,28 @@ export const updateRideStatus = async (req: Request, res: Response) => {
   }
 };
 
-// Get rides for the authenticated rider
+// Controller - Get Rides for Rider with filters and pagination
 export const getRidesForRider = async (req: Request, res: Response) => {
+  const { page = 1, pageSize = 10, status, startDate, endDate, minFare, maxFare } = req.query;
   try {
-    const rides = await RideService.getRidesForRider(req.user.userId); // Now TypeScript knows `userId` exists
+    const rides = await RideService.getRidesForRiderWithFilters(
+      req.user.userId,
+      parseInt(page as string),
+      parseInt(pageSize as string),
+      {
+        status,
+        startDate,
+        endDate,
+        minFare: minFare ? parseFloat(minFare as string) : undefined,
+        maxFare: maxFare ? parseFloat(maxFare as string) : undefined,
+      }
+    );
     res.status(200).json({ rides });
   } catch (error) {
     res.status(400).json({ message: (error as Error).message });
   }
 };
+
 
 
 
@@ -122,6 +148,34 @@ export const setRiderOffline = catchAsync(
     });
   }
 );
+
+// Get single ride by id (rider can only view own ride; drivers/admins allowed)
+export const getRideById = async (req: Request, res: Response) => {
+  try {
+    const rideId = req.params.id;
+    const ride = await RideModel.findById(rideId);
+    if (!ride) {
+      return res.status(404).json({ message: "Ride not found" });
+    }
+
+    const userId = req.user.userId;
+    const role = req.user.role;
+
+    // riders: only their own ride
+    if (role === "rider" && ride.riderId.toString() !== userId) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+    // drivers: allow if assigned to this ride (optional, keep simple)
+    if (role === "driver" && ride.driverId && ride.driverId.toString() !== userId) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    return res.status(200).json({ ride });
+  } catch (e) {
+    return res.status(400).json({ message: (e as Error).message });
+  }
+};
+
 
 // Get total cost for the rider
 export const getTotalCostForRider = async (req: Request, res: Response) => {
