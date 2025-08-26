@@ -33,6 +33,63 @@ export const approveDriver = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+export const getEarningsSummary = catchAsync(
+  async (req: Request, res: Response) => {
+    const driverId = req.user.userId;
+    const rangeRaw = (req.query.range as string) || "daily";
+    const range = (["daily", "weekly", "monthly"] as const).includes(
+      rangeRaw as any
+    )
+      ? (rangeRaw as "daily" | "weekly" | "monthly")
+      : "daily";
+
+    const buckets = await RideService.getDriverEarningsBuckets(driverId, range);
+
+    return sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: `Earnings summary (${range})`,
+      data: buckets,
+    });
+  }
+);
+
+// ▶️ NEW: Driver ride history
+export const getDriverRideHistory = catchAsync(async (req: Request, res: Response) => {
+  const driverId = req.user.userId;
+
+  const {
+    page = "1",
+    pageSize = "10",
+    status,
+    startDate,
+    endDate,
+    minFare,
+    maxFare,
+  } = req.query as Record<string, string | undefined>;
+
+  const parsed = await RideService.getRidesForDriverWithFilters(
+    driverId,
+    parseInt(page || "1", 10),
+    parseInt(pageSize || "10", 10),
+    {
+      status,
+      startDate,
+      endDate,
+      minFare: minFare ? parseFloat(minFare) : undefined,
+      maxFare: maxFare ? parseFloat(maxFare) : undefined,
+    }
+  );
+
+  return sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Driver ride history",
+    data: parsed,
+  });
+});
+
 export const suspendDriver = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const { isSuspended } = req.body;

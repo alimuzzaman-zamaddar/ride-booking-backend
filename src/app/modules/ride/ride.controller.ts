@@ -36,33 +36,6 @@ const calculateFare = (pickupLocation: string, destination: string): number => {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Update ride status (Driver or Admin) — hardened to use allowed transitions
 export const updateRideStatus = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -71,15 +44,19 @@ export const updateRideStatus = async (req: Request, res: Response) => {
   try {
     const updatedRide = await RideService.updateRideStatus(
       id,
-      status,
-      req.user.userId,
-      req.user.role
+      status, // ← use the requested status from the body
+      req.user.userId, // ← current authenticated user id
+      req.user.role // ← current authenticated user role
     );
+
     res.status(200).json({ message: "Ride status updated", ride: updatedRide });
   } catch (error) {
     res.status(400).json({ message: (error as Error).message });
   }
 };
+
+
+
 
 // Controller - Get Rides for Rider with filters and pagination
 export const getRidesForRider = async (req: Request, res: Response) => {
@@ -224,12 +201,6 @@ export const getTotalCostForRider = async (req: Request, res: Response) => {
   }
 };
 
-
-
-
-// GET /ride/requests/open  (driver only)
-// Returns rides with status "requested" and no driver assigned,
-// and excludes rides already rejected by this driver.
 export const listOpenRequests = async (req: Request, res: Response) => {
   try {
     const driverId = req.user.userId;
@@ -249,6 +220,7 @@ export const listOpenRequests = async (req: Request, res: Response) => {
   }
 };
 
+
 // PATCH /ride/:id/accept  (driver only)
 export const acceptRide = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -263,12 +235,19 @@ export const acceptRide = async (req: Request, res: Response) => {
     if (driver.isApproved === false) return res.status(400).json({ message: "Driver not approved yet" });
     if (!driver.isOnline) return res.status(400).json({ message: "Go online to accept rides" });
 
-    const updatedRide = await RideService.updateRideStatus(id, "accepted", driverId);
+    const updatedRide = await RideService.updateRideStatus(
+      id,
+      "accepted",
+      driverId,
+      req.user.role    // ← pass role here
+    );
+
     res.status(200).json({ message: "Ride accepted", ride: updatedRide });
   } catch (error) {
     res.status(400).json({ message: (error as Error).message });
   }
 };
+
 
 // PATCH /ride/:id/reject  (driver only)
 // Marks this ride as rejected-by this driver so it won't show again to them.
